@@ -1,0 +1,38 @@
+Subject: [PATCH 1/2] Stamp build version as 7.3.33-CVE-2026-109618
+
+NOTE: internal backport written for this rebuild environment - not an upstream
+PHP artifact. The official upstream fix is 7.4-only.
+
+Same intent as the PHP 7.4 series' 0001-version-marker.diff: make the rebuilt
+binary self-identifying via `php --version`, and stop ./configure from
+overwriting the patched main/php_version.h during build.
+
+NOTE: internal backport written for this rebuild environment - not an upstream
+PHP artifact. The official upstream fix is 7.4-only.
+
+PHP 7.3's generated `configure` does not parse the version out of
+`set $(echo <ver> | sed ...)` the way 7.4's does; it hard-codes PHP_MAJOR_VERSION
+/ PHP_MINOR_VERSION / PHP_RELEASE_VERSION / PHP_EXTRA_VERSION. So the marker is
+applied to PHP_EXTRA_VERSION there instead. PHP_VERSION_ID stays 70333.
+--- a/configure
++++ b/configure
+@@ -3664,7 +3664,7 @@
+ PHP_MAJOR_VERSION=7
+ PHP_MINOR_VERSION=3
+ PHP_RELEASE_VERSION=33
+-PHP_EXTRA_VERSION=""
++PHP_EXTRA_VERSION="-CVE-2026-109618"
+ PHP_VERSION="$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION.$PHP_RELEASE_VERSION$PHP_EXTRA_VERSION"
+ PHP_VERSION_ID=`expr $PHP_MAJOR_VERSION \* 10000 + $PHP_MINOR_VERSION \* 100 + $PHP_RELEASE_VERSION`
+ 
+--- a/main/php_version.h
++++ b/main/php_version.h
+@@ -3,6 +3,6 @@
+ #define PHP_MAJOR_VERSION 7
+ #define PHP_MINOR_VERSION 3
+ #define PHP_RELEASE_VERSION 33
+-#define PHP_EXTRA_VERSION ""
+-#define PHP_VERSION "7.3.33"
++#define PHP_EXTRA_VERSION "-CVE-2026-109618"
++#define PHP_VERSION "7.3.33-CVE-2026-109618"
+ #define PHP_VERSION_ID 70333
